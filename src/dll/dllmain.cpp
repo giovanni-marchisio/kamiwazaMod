@@ -1,5 +1,6 @@
 #include <shlobj.h>
 #include <string>
+#include "../memory/memory.h"
 #include <windows.h>
 
 void WriteToIni()
@@ -18,6 +19,21 @@ void WriteToIni()
             iniPath.c_str()                      
         );
     }
+}
+
+void PatchAddress()
+{
+    // I did not test every address to make sure everything needs to be patched,
+    // but for now it will stay like this.
+    WriteFloat(TARGET_FPS, 60.0f);
+    WriteFloat(FPS_HALF_RATE, 30.0f);
+    WriteFloat(FRAME_DELTA, 1.0f / 60.0f);
+    WriteFloat(FRAME_DELTA_2, 1.0f / 60.0f);
+    WriteFloat(FRAME_DELTA_3, 1.0f / 60.0f);
+    WriteFloat(FRAME_TIMING_DELTA, 1.0f / 60.0f);
+    WriteByte(FIXED_FRAME_BRANCH, 0xEB);
+    // I probably need to look at the game using cheat engine/ghidra by myself 
+    // instead of letting the AI imagine how things work (sadly I'm not that good either :( )
 }
 
 

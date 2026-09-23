@@ -9,17 +9,20 @@ else
 endif 
 
 CXXFLAGS	:= -shared -O2 -Wall
-SRC			:= ./src/dll/dllmain.cpp
+LDFLAGS		:= -static
+
+SRC			:= ./src/dll/*.cpp ./src/memory/*.cpp
+DEF			:= ./dwmapi.def
 BUILD		:= ./build/
-TARGET	:= ./build/dwmapi.dll
+TARGET		:= ./build/dwmapi.dll
 
 .PHONY: all clean
 
-all:	$(TARGET)
+all: $(TARGET)
 
-$(TARGET):	$(SRC)
+$(TARGET):	$(SRC) $(DEF)
 	$(MKDIR) $(BUILD)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(SRC) $(DEF) -o $(TARGET) $(LDFLAGS)
 
 clean:
 	$(RM) $(TARGET)
