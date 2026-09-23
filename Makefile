@@ -8,10 +8,11 @@ else
 	RM		:= rm -f
 endif 
 
-CXXFLAGS	:= -shared -O2 -Wall
+CXXFLAGS	:= -shared -O2 -Wall -I./src/MinHook/include/ -I./src/MinHook/include/hde/ -I./src/hook/
 LDFLAGS		:= -static
+LDLIBS		:= ./src/MinHook/minhook.a -ld3d11 -ldxgi
 
-SRC			:= ./src/dll/*.cpp ./src/memory/*.cpp
+SRC			:= ./src/dll/*.cpp ./src/dummy/*.cpp ./src/memory/*.cpp ./src/hook/*.cpp
 DEF			:= ./dwmapi.def
 BUILD		:= ./build/
 TARGET		:= ./build/dwmapi.dll
@@ -22,7 +23,7 @@ all: $(TARGET)
 
 $(TARGET):	$(SRC) $(DEF)
 	$(MKDIR) $(BUILD)
-	$(CXX) $(CXXFLAGS) $(SRC) $(DEF) -o $(TARGET) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(SRC) $(DEF) -o $(TARGET) $(LDFLAGS) $(LDLIBS)
 
 clean:
 	$(RM) $(TARGET)

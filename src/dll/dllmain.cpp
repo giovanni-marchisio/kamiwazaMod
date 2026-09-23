@@ -3,21 +3,23 @@
 #include "../memory/memory.h"
 #include <windows.h>
 
+#include "../hook/hook.h"
+#include "../MinHook/MinHook.h"
+
 void WriteToIni()
 {
     wchar_t localAppData[MAX_PATH];
-    if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, localAppData))) 
+    if (SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, localAppData)))
     {
         std::wstring iniPath = localAppData;
 
         iniPath += L"\\Kamiwaza\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini";
 
         WritePrivateProfileStringW(
-            L"/Script/Engine.GameUserSettings", 
-            L"FrameRateLimit",                   
-            L"60.000000",                        
-            iniPath.c_str()                      
-        );
+            L"/Script/Engine.GameUserSettings",
+            L"FrameRateLimit",
+            L"60.000000",
+            iniPath.c_str());
     }
 }
 
@@ -32,15 +34,18 @@ void PatchFPS()
     WriteFloat(FRAME_DELTA_3, 1.0f / 60.0f);
     WriteFloat(FRAME_TIMING_DELTA, 1.0f / 60.0f);
     WriteByte(FIXED_FRAME_BRANCH, 0xEB);
-    // I probably need to look at the game using cheat engine/ghidra by myself 
+    // I probably need to look at the game using cheat engine/ghidra by myself
     // instead of letting the AI imagine how things work (sadly I'm not that good either :( )
 }
 
-
 DWORD WINAPI CoolThread(LPVOID)
 {
-    PatchFPS();
     WriteToIni();
+    PatchFPS();
+    MH_Initialize();
+    PresentHook();
+    ItemHook();
+    
     return 0;
 }
 
@@ -60,6 +65,11 @@ BOOL WINAPI DllMain(
             nullptr,
             0,
             nullptr);
+    }
+
+    if (reason == DLL_PROCESS_DETACH)
+    {
+        PresentUnhook();
     }
 
     return TRUE;
