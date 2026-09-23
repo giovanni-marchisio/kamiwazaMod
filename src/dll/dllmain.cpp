@@ -1,5 +1,6 @@
 #include <shlobj.h>
 #include <string>
+#include "../hook/hook.h"
 #include "../memory/memory.h"
 #include <windows.h>
 
@@ -21,7 +22,7 @@ void WriteToIni()
     }
 }
 
-void PatchAddress()
+void PatchFPS()
 {
     // I did not test every address to make sure everything needs to be patched,
     // but for now it will stay like this.
@@ -39,7 +40,9 @@ void PatchAddress()
 
 DWORD WINAPI CoolThread(LPVOID)
 {
+    PatchFPS();
     WriteToIni();
+    PresentHook();
     return 0;
 }
 
@@ -60,6 +63,10 @@ BOOL WINAPI DllMain(
             0,
             nullptr);
     }
-
+    
+    if (reason == DLL_PROCESS_DETACH)
+    {
+        PresentUnhook();
+    }
     return TRUE;
 }

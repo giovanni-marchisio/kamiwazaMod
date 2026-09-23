@@ -15,5 +15,6 @@ uintptr_t GameBase();
 uintptr_t GameAddress(uintptr_t offset);
 
 
+float ReadFloat(uintptr_t offset);
 bool WriteFloat(uintptr_t offset, float value);
 bool WriteByte(uintptr_t offset, uint8_t value);

@@ -14,6 +14,20 @@ uintptr_t GameAddress(uintptr_t offset)
     return GameBase() + offset;
 }
 
+float ReadFloat(uintptr_t offset)
+{
+    uintptr_t address = GameAddress(offset);
+
+    DWORD oldProtect;
+    VirtualProtect(reinterpret_cast<void*>(address), sizeof(float), PAGE_READWRITE, &oldProtect);
+
+    float value = *reinterpret_cast<float*>(address);
+
+    VirtualProtect(reinterpret_cast<void*>(address), sizeof(float), oldProtect, &oldProtect);
+
+    return value;
+}
+
 bool WriteFloat(uintptr_t offset, float value)
 {
     uintptr_t address = GameAddress(offset);
